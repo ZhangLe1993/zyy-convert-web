@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import { Tooltip, Upload, Card, Divider, Image, message } from 'antd';
 import { InboxOutlined, SwapOutlined, UploadOutlined, ExpandOutlined, SaveOutlined } from '@ant-design/icons';
 
@@ -28,31 +28,68 @@ const PictureWater = () => {
    */
   let [visible, setVisible] = useState<boolean>(false);
 
-
-
-  // let [startX, setStartX] = useState<number>(0);
-  // let [startY, setstartY] = useState<number>(0);
-  // let [endX, setEndX] = useState<number>(0);
-  // let [endY, setEndY] = useState<number>(0);
+  /**
+   * 画框
+   */
+  let [divRectList, setDivRectList] = useState<Array<object>>([]);
 
   let startX = 0;
   let startY = 0;
   let endX = 0;
   let endY = 0;
-  let context;
+  let temp: any[] = [];
 
 
-
-  /**
-   * 获取图片base64
-   * @param img
-   * @param callback
-   */
-  const getBase64 = (img: Blob, callback: any) => {
-    const reader = new FileReader();
-    reader.addEventListener('load', () => callback(reader.result));
-    reader.readAsDataURL(img);
+  const mouseDown = (event: MouseEvent) => {
+    event.stopPropagation();
+    startX = event.offsetX;
+    startY = event.offsetY;
+    // console.log("startX=" , startX, "startY=", startY);
   };
+
+  const mouseUp = (event: MouseEvent) => {
+    event.stopPropagation();
+    endX = event.offsetX;
+    endY = event.offsetY;
+    // console.log("endX=" , endX, "endY=", endY);
+    // 绘制矩形
+    const left = startX;
+    const top = startY;
+    const width = endX - startX;
+    const height = endY - startY;
+
+    const list = [...temp];
+    list.push({"left": left, "top": top, "width" : width, "height": height});
+    temp = list;
+    setDivRectList(temp);
+  };
+
+  const selectArea = () => {
+    const imageBox = document.getElementById("image");
+    if(imageBox == null) {
+      message.warn("图片加载异常, 请刷新浏览器或者更换浏览器后重试");
+      return;
+    }
+    const width = imageBox.style.width || imageBox.clientWidth || imageBox.offsetWidth || imageBox.scrollWidth;
+    const height = imageBox.style.height || imageBox.clientHeight || imageBox.offsetHeight || imageBox.scrollHeight;
+    console.log(width);
+    console.log(height);
+    const canvas = document.getElementById('canvas');
+    if(canvas == null) {
+      message.warn("画布渲染异常, 请刷新浏览器或者更换浏览器后重试");
+      return;
+    }
+    // 设置画布宽度和高度
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+    canvas.style.position = "absolute";
+    canvas.style.display = "block";
+    canvas.style.zIndex = "2";
+    // 绑定事件
+    canvas.onmousedown = mouseDown;
+    canvas.onmouseup = mouseUp;
+  };
+
 
   /**
    * 预览图片获取链接
@@ -64,62 +101,34 @@ const PictureWater = () => {
   };
 
   /**
+   * 获取图片base64
+   * @param img
+   * @param callback
+   */
+  const getBase64 = (img: Blob, callback: any) => {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => callback(reader.result));
+    reader.readAsDataURL(img);
+    getImageUrl(img);
+  };
+
+  /**
    * 文件上传的自定义实现
    * @param selector
    */
   const uploadRequest = (selector: object) => {
-    console.log(selector);
-    getImageUrl(selector['file']);
     getBase64(selector['file'], base64 => {
-      // console.log(base64);
       setImageBase64(base64);
       setVisible(true);
     });
   };
 
-  const selectArea = () => {
-    const imageBox = document.getElementById("image");
-    const width = imageBox.style.width || imageBox.clientWidth || imageBox.offsetWidth || imageBox.scrollWidth;
-    const height = imageBox.style.height || imageBox.clientHeight || imageBox.offsetHeight || imageBox.scrollHeight;
-    console.log(width);
-    console.log(height);
-    let canvas = document.getElementById('canvas');
-    // 设置画布宽度和高度
-    canvas.style.width = width + "px";
-    canvas.style.height = height + "px";
-    canvas.style.position = "absolute";
-    canvas.style.display = "block";
-    canvas.style.zIndex = 1;
-    context = canvas.getContext('2d');
-    // 绑定事件
-    canvas.onmousedown = mouseDown;
-    canvas.onmouseup = mouseUp;
+  const renderRect = () => {
+    const res = divRectList.map((item, index) => {
+      return (<div key={index} style={{position: "absolute",display: "block", zIndex: 3, border: "1px red solid", marginLeft: `${item['left']}px`, marginTop: `${item['top']}px`, width: `${item['width']}px`, height: `${item['height']}px`}}></div>);
+    });
+    return res;
   };
-
-  const mouseDown = (event: MouseEvent) => {
-    startX = event.offsetX;
-    startY = event.offsetY;
-    console.log("startX=" , startX, "startY=", startY);
-  };
-
-  const mouseUp = (event: MouseEvent) => {
-    endX = event.offsetX;
-    endY = event.offsetY;
-    console.log("endX=" , endX, "endY=", endY);
-    // 绘制矩形
-    context.beginPath();
-    context.globalAlpha = 0.5; // 透明度
-    context.moveTo(startX, startY);
-    context.lineTo(endX, startY);
-    context.lineTo(endX, endY);
-    context.lineTo(startX, endY);
-    context.lineTo(startX, startY);
-    context.fillStyle = 'white';
-    context.strokeStyle = 'red';
-    context.fill();
-    context.stroke();
-  };
-
 
   const renderTools = () => {
     return (
@@ -167,13 +176,16 @@ const PictureWater = () => {
       {visible &&
         <div className={styles['site-card-border-less-wrapper']}>
           <Card title={renderTools()} bordered={false} style={{ width: '80%', margin: '0 auto' }}>
-            <canvas id="canvas" style={{display: 'none'}}></canvas>
-            <Image
-              id="image"
-              style={{ margin: "0 auto"}}
-              preview={false}
-              src={imageUrl}
-            />
+            <div id="parent">
+              <canvas id="canvas" style={{display: 'none'}}></canvas>
+              {renderRect()}
+              <Image
+                id="image"
+                style={{ margin: "0 auto", border: '1px #E8E8E8 solid'}}
+                preview={false}
+                src={imageUrl}
+              />
+            </div>
           </Card>
         </div>
       }
