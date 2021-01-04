@@ -13,7 +13,7 @@ const proSettings: DefaultSettings = {
   fixedHeader: false,
   fixSiderbar: true,
   colorWeak: false,
-  title: '文件转换平台',
+  title: '张音乐',
   pwa: false,
   iconfontUrl: '',
 };
