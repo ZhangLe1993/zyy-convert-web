@@ -1,18 +1,18 @@
 import React, {useState, useRef, useEffect} from 'react';
 import { Tooltip, Upload, Button, Card, Divider, Image, message, notification } from 'antd';
-import { InboxOutlined, SwapOutlined, UploadOutlined, ExpandOutlined, SaveOutlined, FileImageOutlined } from '@ant-design/icons';
+import { InboxOutlined, SwapOutlined, UploadOutlined, ExpandOutlined, SaveOutlined, YoutubeOutlined } from '@ant-design/icons';
 
 const { Dragger } = Upload;
 
 import styles from './index.less';
-import {deLogoPictureWater} from "@/services/picture";
-import {accDiv, DeLogo, DeLogoPictureWaterParamsType, openNotificationWithIcon, guid} from "@/pages/picture/entity";
+import {deLogoPictureWater} from "@/services/video";
+import {accDiv, DeLogo, DeLogoPictureWaterParamsType, openNotificationWithIcon, guid} from "@/pages/video/entity";
 
 /**
- * 图片去水印
+ * 视频去水印
  * @constructor
  */
-const PictureWater = () => {
+const VideoWater = () => {
 
 
   /**
@@ -264,6 +264,7 @@ const PictureWater = () => {
   const renderTools = () => {
     return (
       <span>
+        <VideoCameraOutlined />
         {selectVisible &&
         <Tooltip placement="top" title={"选择区域"}>
           <Button type="primary" shape="round" style={{ cursor : "pointer" }} icon={<ExpandOutlined />} size="default"  onClick={selectArea}>选择区域</Button>
@@ -294,20 +295,20 @@ const PictureWater = () => {
 
       {!visible &&
         <div className={styles['site-card-border-less-wrapper']}>
-          <Card title={"图片上传"} bordered={false} style={{ width: '80%', margin: '0 auto' }}>
+          <Card title={"视频上传"} bordered={false} style={{ width: '80%', margin: '0 auto' }}>
             <Dragger
-              name={"上传图片"}
+              name={"上传视频"}
               customRequest={uploadRequest}
               showUploadList={false}
               multiple={false}
-              accept="image/*"
+              accept="video/*"
             >
               <p className="ant-upload-drag-icon">
-                <FileImageOutlined />
+                <YoutubeOutlined />
               </p>
-              <p className="ant-upload-text">点击或者拖拽图片到这里上传</p>
+              <p className="ant-upload-text">点击或者拖拽视频到这里上传</p>
               <p className="ant-upload-hint">
-                支持 png,jpg,jpeg 等多种图片格式
+                支持 mp4,flv,rmvb,avi,mkv 等多种视频格式
               </p>
             </Dragger>
           </Card>
@@ -336,4 +337,4 @@ const PictureWater = () => {
   );
 };
 
-export default PictureWater;
+export default VideoWater;

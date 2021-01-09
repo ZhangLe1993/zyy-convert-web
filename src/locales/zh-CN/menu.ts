@@ -50,4 +50,5 @@ export default {
   'menu.editor.mind': '脑图编辑器',
   'menu.editor.koni': '拓扑编辑器',
   'menu.pictureWater': '图片去水印',
+  'menu.videoWater': '视频去水印',
 };

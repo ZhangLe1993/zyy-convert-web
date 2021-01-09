@@ -18,6 +18,12 @@
             component: './picture/index.tsx',
           },
           {
+            path: '/video/water',
+            name: 'videoWater',
+            icon: 'youtube',
+            component: './video/index.tsx',
+          },
+          {
             component: './404',
           },
         ],
