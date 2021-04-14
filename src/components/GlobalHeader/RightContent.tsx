@@ -1,7 +1,7 @@
-import { Tooltip, Tag } from 'antd';
+import { Tooltip, Button, Modal, Image, Row, Col, Tag } from 'antd';
 import type { Settings as ProSettings } from '@ant-design/pro-layout';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import React from 'react';
+import React, {useState} from 'react';
 import type { ConnectProps } from 'umi';
 import { connect, SelectLang } from 'umi';
 import type { ConnectState } from '@/models/connect';
@@ -28,8 +28,46 @@ const GlobalHeaderRight: React.SFC<GlobalHeaderRightProps> = (props) => {
     className = `${styles.right}  ${styles.dark}`;
   }
 
+  let [visible, setVisible] = useState<boolean>(false);
+
+  const onClick = () => {
+    setVisible(true);
+  };
+
   return (
     <div className={className}>
+      <span style={{padding: '8px 12px'}}>
+        <Button type="primary" shape="round" onClick={onClick}>
+          捐助
+        </Button>
+        <Modal
+          title="捐助"
+          centered
+          visible={visible}
+          onOk={() => setVisible(false)}
+          onCancel={() => setVisible(false)}
+          width={1000}
+        >
+           <Row>
+            <Col span={12}>
+              <Image
+                id="alipay"
+                style={{ margin: "0 auto", border: '1px #E8E8E8 solid'}}
+                preview={false}
+                src={"../alipay.jpg"}
+              />
+            </Col>
+            <Col span={12}>
+              <Image
+                id="weixin"
+                style={{ margin: "0 auto", border: '1px #E8E8E8 solid'}}
+                preview={false}
+                src={'../weixin.png'}
+              />
+            </Col>
+          </Row>
+      </Modal>
+      </span>
       <Avatar />
       {REACT_APP_ENV && (
         <span>

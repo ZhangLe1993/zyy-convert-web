@@ -2,6 +2,7 @@
   "name": "ant-design-pro",
   "version": "4.5.0",
   "private": true,
+  "homepage": ".",
   "description": "An out-of-box UI solution for enterprise applications",
   "scripts": {
     "analyze": "cross-env ANALYZE=1 umi build",
@@ -63,7 +64,8 @@
     "react-helmet-async": "^1.0.4",
     "umi": "^3.2.14",
     "umi-request": "^1.0.8",
-    "use-merge-value": "^1.0.1"
+    "use-merge-value": "^1.0.1",
+    "video-react": "^0.14.1"
   },
   "devDependencies": {
     "@ant-design/pro-cli": "^1.0.18",

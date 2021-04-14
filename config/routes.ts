@@ -18,6 +18,12 @@
             component: './picture/index.tsx',
           },
           {
+            path: '/video/analysis',
+            name: 'videoAnalysis',
+            icon: 'youtube',
+            component: './video/analysis/index.tsx',
+          },
+          {
             component: './404',
           },
         ],
